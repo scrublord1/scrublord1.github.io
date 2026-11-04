@@ -2,7 +2,7 @@ export default function EdgeConnector({ link, compact }) {
   return (
     <a
       href={link.href}
-      {...(link.download ? { download: link.detail } : { target: '_blank', rel: 'noopener noreferrer' })}
+      {...(link.download ? { download: link.download } : { target: '_blank', rel: 'noopener noreferrer' })}
       aria-label={`${link.label}${link.download ? ', download' : ', opens in a new tab'}`}
       className="connector group flex h-full w-full flex-col justify-between"
     >

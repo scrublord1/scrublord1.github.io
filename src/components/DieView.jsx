@@ -31,7 +31,7 @@ function TreeList({ items }) {
 }
 
 function Floorplan({ project }) {
-  const { blockDiagram, firmware, hardware, metrics } = project
+  const { blockDiagram, firmware, hardware, metrics, photo } = project
 
   return (
     <div className="die-floor grid min-w-0 gap-px md:grid-cols-12">
@@ -63,6 +63,19 @@ function Floorplan({ project }) {
         <BlockLabel code="C">Hardware layer</BlockLabel>
         <TreeList items={hardware} />
       </section>
+
+      {photo && (
+        <figure className="die-block m-0 md:col-span-12">
+          <BlockLabel code="D">On the bench</BlockLabel>
+          <img
+            src={photo.src}
+            alt={photo.alt}
+            loading="lazy"
+            className="mx-auto max-h-[520px] w-auto max-w-full border border-line-bright object-contain"
+          />
+          <figcaption className="mt-2 text-center font-mono text-[11px] text-slate-400">{photo.caption}</figcaption>
+        </figure>
+      )}
     </div>
   )
 }
@@ -141,14 +154,18 @@ export default function DieView({ project, onClose, onOpenProject }) {
               <span className="led" />
               {project.status}
             </p>
-            <a
-              href={project.repo}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-2 inline-block font-mono text-xs text-cyan-glow underline-offset-4 hover:underline"
-            >
-              View the source on GitHub ↗
-            </a>
+            <div className="mt-2 flex flex-wrap gap-x-4 font-mono text-xs text-cyan-glow">
+              {project.repo && (
+                <a href={project.repo} target="_blank" rel="noopener noreferrer" className="underline-offset-4 hover:underline">
+                  View the source on GitHub ↗
+                </a>
+              )}
+              {project.video && (
+                <a href={project.video} target="_blank" rel="noopener noreferrer" className="underline-offset-4 hover:underline">
+                  Watch the demo video ↗
+                </a>
+              )}
+            </div>
           </div>
         </header>
 

@@ -11,17 +11,17 @@ import LayerSwitch from './LayerSwitch'
 
 const place = (rect) => ({ position: 'absolute', left: rect.x, top: rect.y, width: rect.w, height: rect.h })
 const MIN_SCALE = 0.85
+const MAX_PORTRAIT_SCALE = 1.5
 const GUTTER = 16
 
 export default function Board({
   openChipId,
-  skillsOpen,
+  activeLayer,
   focusedZone,
   onOpenProject,
   onFocusZone,
   onOpenConsole,
-  onShowProjects,
-  onShowSkills,
+  onSelectLayer,
 }) {
   const { width, height } = useViewport()
   const orientation = width / height < 1 ? 'portrait' : 'landscape'
@@ -31,7 +31,8 @@ export default function Board({
   const gutter = wide ? GUTTER : 6
   const fitWidth = (width - gutter * 2) / board.W
   const fitHeight = (height - gutter * 2) / board.H
-  const scale = Math.min(fitWidth, Math.max(fitHeight, MIN_SCALE))
+  // Wide screens fit the whole board. The tall phone footprint fits the width and scrolls.
+  const scale = wide ? Math.min(fitWidth, Math.max(fitHeight, MIN_SCALE)) : Math.min(fitWidth, MAX_PORTRAIT_SCALE)
 
   const seatRef = useRef(null)
   const [camera, setCamera] = useState(null)
@@ -68,7 +69,7 @@ export default function Board({
     return nets
   }, [hoveredNet, focusedZone, board])
 
-  const overlayOpen = Boolean(openChipId) || skillsOpen
+  const overlayOpen = Boolean(openChipId) || activeLayer !== 'projects'
 
   return (
     <div
@@ -128,7 +129,6 @@ export default function Board({
                 project={chip.project}
                 refdes={`U${chip.index + 1}`}
                 index={chip.index}
-                compact={!wide}
                 dimmed={Boolean(focusedZone) && chip.zone.id !== focusedZone}
                 onOpen={() => onOpenProject(chip.project.id)}
                 onHover={setHoveredNet}
@@ -143,7 +143,7 @@ export default function Board({
           ))}
 
           <div style={place(board.layers)}>
-            <LayerSwitch compact={!wide} skillsOpen={skillsOpen} onShowProjects={onShowProjects} onShowSkills={onShowSkills} />
+            <LayerSwitch compact={!wide} activeLayer={activeLayer} onSelect={onSelectLayer} />
           </div>
         </main>
       </div>

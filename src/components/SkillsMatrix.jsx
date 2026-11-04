@@ -208,14 +208,14 @@ export default function SkillsMatrix({ onOpenProject, onClose }) {
                 <span className="text-slate-500"> | {readoutSkill.meta}</span>
               </p>
               <div className="flex flex-wrap gap-1.5">
-                {readoutSkill.id === 'cloud' && (
+                {readoutSkill.link && (
                   <a
-                    href="https://github.com/scrublord1/event-driven-pipeline-aws"
+                    href={readoutSkill.link.href}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="border border-emerald-glow/30 px-2 py-1 font-mono text-[11px] text-emerald-glow transition-colors hover:bg-emerald-glow/10"
                   >
-                    Event pipeline repo ↗
+                    {readoutSkill.link.label} ↗
                   </a>
                 )}
                 {readoutSkill.projects.map((projectId) => {

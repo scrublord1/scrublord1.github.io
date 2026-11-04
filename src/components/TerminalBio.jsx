@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { focusAreas, profile, projects, signalChain, tabs } from '../data/projects'
 
 const PROMPT = `${profile.handle}@bench:~$`
-const QUICK_COMMANDS = ['whoami', 'focus', 'projects', 'skills']
+const QUICK_COMMANDS = ['whoami', 'experience', 'projects', 'skills']
 
 const BOOT_LINES = [
   { kind: 'dim', text: 'bench-os v2.4, serial link up at 115200' },
@@ -19,7 +19,7 @@ const LINE_STYLES = {
   dim: 'text-slate-500',
 }
 
-function runCommand(raw, { onFocusZone, onShowSkills, onOpenProject }) {
+function runCommand(raw, { onFocusZone, onShowSkills, onShowExperience, onOpenProject }) {
   const [command, ...rest] = raw.trim().toLowerCase().split(/\s+/)
   const argument = rest.join(' ')
 
@@ -32,6 +32,7 @@ function runCommand(raw, { onFocusZone, onShowSkills, onOpenProject }) {
         'open <1-3>    highlight a board zone',
         'probe <name>  decap a chip, e.g. probe rail',
         'skills        show the signal chain layer',
+        'experience    show my work history',
         'resume        download my resume',
         'clear         wipe the console',
       ].map((text) => ({ kind: 'out', text }))
@@ -64,11 +65,14 @@ function runCommand(raw, { onFocusZone, onShowSkills, onOpenProject }) {
       onShowSkills()
       return [{ kind: 'ok', text: `inner layer exposed, ${total} nodes` }]
     }
+    case 'experience':
+      onShowExperience()
+      return [{ kind: 'ok', text: 'silkscreen layer exposed' }]
     case 'resume': {
       const resume = profile.links.find((link) => link.download)
       const anchor = document.createElement('a')
       anchor.href = resume.href
-      anchor.download = resume.detail
+      anchor.download = resume.download
       anchor.click()
       return [{ kind: 'ok', text: `sending ${resume.detail}` }]
     }
@@ -80,7 +84,7 @@ function runCommand(raw, { onFocusZone, onShowSkills, onOpenProject }) {
 }
 
 /* The serial console, docked to the bottom corner of the screen. */
-export default function TerminalBio({ open, onClose, onFocusZone, onShowSkills, onOpenProject }) {
+export default function TerminalBio({ open, onClose, onFocusZone, onShowSkills, onShowExperience, onOpenProject }) {
   const [lines, setLines] = useState(BOOT_LINES)
   const [draft, setDraft] = useState('')
   const historyRef = useRef([])
@@ -109,7 +113,7 @@ export default function TerminalBio({ open, onClose, onFocusZone, onShowSkills, 
       return
     }
     const echo = { kind: 'in', text: `${PROMPT} ${value}` }
-    const output = runCommand(value, { onFocusZone, onShowSkills, onOpenProject })
+    const output = runCommand(value, { onFocusZone, onShowSkills, onShowExperience, onOpenProject })
     setLines((current) => [...current, echo, ...output])
   }
 
